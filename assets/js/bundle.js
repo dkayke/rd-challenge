@@ -43,9 +43,11 @@
     };
 
     Form.innerHTML = `
-        <input type="email" name="email" id="email" placeholder="Entre com seu e-mail" />
-        <input type="password" name="password" id="password" placeholder="Digite sua senha supersecreta" />
-        <button name="btnLogin" id="btnLogin" disabled>Entrar</button>`;
+        <input type="email" name="email" id="email" 
+            placeholder="Entre com seu e-mail" alt="Entre com seu e-mail" />
+        <input type="password" name="password" id="password" minlength="6"
+            placeholder="Digite sua senha supersecreta"  alt="Digite sua senha supersecreta" />
+        <button name="btnLogin" id="btnLogin" disabled title="Entrar">Entrar</button>`;
 
     app.appendChild(Logo);
     Login.appendChild(Form);
@@ -71,7 +73,7 @@
 
     function renderPageUsers(users) {
         app.classList.add('logged');
-        // Login.style.display = /* trecho omitido */
+        Login.style.display = 'none';
 
         const Ul = create('ul');
         Ul.classList.add('container')
