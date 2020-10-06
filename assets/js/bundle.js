@@ -69,6 +69,7 @@
                 localStorage.removeItem('token');
                 location.reload();
             });
+        return data;
     }
 
     function renderPageUsers(users) {
@@ -78,10 +79,20 @@
         const Ul = create('ul');
         Ul.classList.add('container')
 
-        /**
-         * bloco de código omitido
-         * exiba a lista de desenvolvedores
-         */
+        users?.map(user => {            
+            const paragraph = create("p");
+            paragraph.innerHTML = user.login;
+            
+            const img = create("img");
+            img.setAttribute("src", user.avatar_url);
+            img.setAttribute("alt", user.login);
+            
+            const li = create("li");
+            li.setAttribute("title", user.login);
+            li.appendChild(img);
+            li.appendChild(paragraph);
+            Ul.appendChild(li);
+        });
 
         app.appendChild(Ul)
     }
