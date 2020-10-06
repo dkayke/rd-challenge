@@ -1,6 +1,16 @@
 (() => {
-    const selector = selector => /* trecho omitido */
-    const create = element => /* trecho omitido */
+    const selector = selector => document.querySelector(selector);
+    const create = element => elem = document.createElement(element);
+
+    const fetchSuccess = response => {
+        if (!response.ok) throw Error(response?.statusText);
+        return response.json();
+    }
+
+    const fetchError = error => {
+        console.warn(error);
+        alert('Ocorreu um erro na comunicação, tente novamente em breve!');
+    }
 
     const app = selector('#app');
 
@@ -15,55 +25,53 @@
 
     Form.onsubmit = async e => {
         e.preventDefault();
-        const [email, password] = /* trecho omitido */
+        const [email, password] = document.querySelectorAll('input');
 
-        const {url} = await fakeAuthenticate(email.value, password.value);
+        const { url } = await fakeAuthenticate(email.value, password.value);
 
-        location.href='#users';
-        
+        location.href = '#users';
+
         const users = await getDevelopersList(url);
         renderPageUsers(users);
     };
 
     Form.oninput = e => {
         const [email, password, button] = e.target.parentElement.children;
-        (!email.validity.valid || !email.value || password.value.length <= 5) 
-            ? button.setAttribute('disabled','disabled')
+        (!email.validity.valid || !email.value || password.value.length <= 5)
+            ? button.setAttribute('disabled', 'disabled')
             : button.removeAttribute('disabled');
     };
 
-    Form.innerHTML = /**
-    * bloco de código omitido
-    * monte o seu formulário
-    */
+    Form.innerHTML = `
+        <input type="email" name="email" id="email" placeholder="Entre com seu e-mail" />
+        <input type="password" name="password" id="password" placeholder="Digite sua senha supersecreta" />
+        <button name="btnLogin" id="btnLogin" disabled>Entrar</button>`;
 
     app.appendChild(Logo);
     Login.appendChild(Form);
 
     async function fakeAuthenticate(email, password) {
-
-        /**
-         * bloco de código omitido
-         * aqui esperamos que você faça a requisição ao URL informado
-         */
-
-        const fakeJwtToken = `${btoa(email+password)}.${btoa(data.url)}.${(new Date()).getTime()+300000}`;
-        /* trecho omitido */
-
+        const data = await fetch('http://www.mocky.io/v2/5dba690e3000008c00028eb6')
+            .then(fetchSuccess)
+            .catch(fetchError);
+        const fakeJwtToken = `${btoa(email + password)}.${btoa(data?.url)}.${(new Date()).getTime() + 300000}`;
+        if(data?.url) localStorage.setItem('token', fakeJwtToken);
         return data;
     }
 
     async function getDevelopersList(url) {
-        /**
-         * bloco de código omitido
-         * aqui esperamos que você faça a segunda requisição 
-         * para carregar a lista de desenvolvedores
-         */
+        const data = fetch(url)
+            .then(fetchSuccess)
+            .catch(error => {
+                fetchError(error);
+                localStorage.removeItem('token');
+                location.reload();
+            });
     }
 
     function renderPageUsers(users) {
         app.classList.add('logged');
-        Login.style.display = /* trecho omitido */
+        // Login.style.display = /* trecho omitido */
 
         const Ul = create('ul');
         Ul.classList.add('container')
@@ -77,15 +85,15 @@
     }
 
     // init
-    (async function(){
-        const rawToken = /* trecho omitido */
+    (async function () {
+        const rawToken = localStorage.getItem("token");
         const token = rawToken ? rawToken.split('.') : null
         if (!token || token[2] < (new Date()).getTime()) {
             localStorage.removeItem('token');
-            location.href='#login';
+            location.href = '#login';
             app.appendChild(Login);
         } else {
-            location.href='#users';
+            location.href = '#users';
             const users = await getDevelopersList(atob(token[1]));
             renderPageUsers(users);
         }
